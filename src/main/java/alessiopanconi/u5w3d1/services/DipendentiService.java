@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,9 @@ public class DipendentiService {
 
     @Autowired
     private Cloudinary getImageUploader;
+
+    @Autowired
+    private PasswordEncoder bcrypt;
 
     public Page<Dipendente> findAll(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -40,7 +44,7 @@ public class DipendentiService {
             throw new BadRequestException("L'email " + dipendente.getEmail() + " appartiene già ad un'altro dipendente");
         });
         String avatarUrl = "https://ui-avatars.com/api/?name=" + payload.nome() + "+" + payload.cognome();
-        Dipendente newDipendente = new Dipendente(payload.username(),payload.nome(),payload.cognome(),payload.email(),avatarUrl,payload.password());
+        Dipendente newDipendente = new Dipendente(payload.username(),payload.nome(),payload.cognome(),payload.email(),avatarUrl,bcrypt.encode(payload.password()));
         Dipendente savedDipendente = this.dipendenteRepository.save(newDipendente);
         System.out.println("Il dipendente: "+ payload.nome() +" "+payload.cognome() +" è stato salvato correttamente");
         return savedDipendente;

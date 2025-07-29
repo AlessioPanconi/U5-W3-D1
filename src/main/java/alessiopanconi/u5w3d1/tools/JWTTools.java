@@ -32,4 +32,8 @@ public class JWTTools {
             throw new UnauthorizedException("La sessione è scaduta! Effettuare di nuovo il login!"); // --> 401
         }
     }
+
+    public String extractIdFromToken(String accessToken) {
+        return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parseSignedClaims(accessToken).getPayload().getSubject();
+    }
 }

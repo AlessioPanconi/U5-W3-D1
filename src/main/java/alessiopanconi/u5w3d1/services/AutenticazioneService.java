@@ -20,7 +20,6 @@ public class AutenticazioneService {
         {
             Dipendente found = this.dipendentiService.findByEmail(body.email());
             if (found.getPassword().equals(body.password())) {
-                // TODO: Migliorare gestione password
                 String accessToken = jwtTools.createToken(found);
                 return accessToken;
             } else {
